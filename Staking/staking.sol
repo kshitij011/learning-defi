@@ -131,3 +131,5 @@ contract StackingRewards {
         return x <= y ? x : y;
     }
 }
+
+// https://solidity-by-example.org/defi/staking-rewards/    (original source)
