@@ -1,13 +1,15 @@
 // understanding curve stable swap AMM
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.29;
+pragma solidity ^0.8.18;
 
-interface IERC20 {
-    function balanceOf(address) external view returns (uint);
-    function transferFrom(address, address, uint) external returns (bool);
-    function transfer(address, uint) external returns (bool);
-    function approve(address, uint) external returns (bool);
-}
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+// interface IERC20 {
+//     function balanceOf(address) external view returns (uint);
+//     function transferFrom(address, address, uint) external returns (bool);
+//     function transfer(address, uint) external returns (bool);
+//     function approve(address, uint) external returns (bool);
+// }
 
 contract MintStableSwap {
     IERC20 public immutable token0;
@@ -122,16 +124,6 @@ contract MintStableSwap {
 
         _updateReserves();
 
-        uint x = reserve0;
-        uint y = reserve1;
-
-        // remove amountIn from the opposite balance
-        if (tokenIndex == 0) {
-            x = x;
-        } else {
-            y = y;
-        }
-
         // D before fees
         uint D = _getD(reserve0, reserve1);
 
@@ -164,11 +156,11 @@ contract MintStableSwap {
         if (tokenIndex == 0) {
             amountOut = reserve1 > yFinal ? (reserve1 - yFinal) : 0;
             require(amountOut >= minAmountOut, "Slippage");
-            token1.transfer(msg.sender, yFinal);
+            token1.transfer(msg.sender, amountOut);
         } else {
             amountOut = reserve0 > yFinal ? (reserve0 - yFinal) : 0;
             require(amountOut >= minAmountOut, "Slippage");
-            token0.transfer(msg.sender, yFinal);
+            token0.transfer(msg.sender, amountOut);
         }
 
         _updateReserves();
